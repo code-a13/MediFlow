@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pydantic
+langchain
+langchain-ollama
+langchain-chroma
+langchain-core
+langchain-text-splitters
+requests
+httpx
+numpy
