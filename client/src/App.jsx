@@ -9,10 +9,10 @@ import PatientProfile from './pages/PatientProfile';
 import Prescriptions from './pages/Prescriptions';
 import CreatePatientModal from './components/CreatePatientModal';
 
-// 👇 1. Import the new Patient Chat page
+
 import PatientChat from './pages/PatientChat'; 
 
-// --- Simple Sidebar ---
+
 const Sidebar = ({ onOpenNew }) => {
   const location = useLocation();
 
@@ -24,12 +24,12 @@ const Sidebar = ({ onOpenNew }) => {
 
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col fixed left-0 top-0 z-20">
-      {/* Logo Area */}
+     
       <div className="h-16 flex items-center px-6 border-b border-gray-100">
         <h1 className="text-lg font-bold text-gray-800">MediFlow</h1>
       </div>
 
-      {/* Navigation */}
+     
       <nav className="flex-1 p-4 space-y-1">
         {menu.map((item) => {
           const isActive = location.pathname === item.path || (item.path !== '/' && location.pathname.startsWith(item.path));
@@ -50,7 +50,6 @@ const Sidebar = ({ onOpenNew }) => {
         })}
       </nav>
 
-      {/* User Section */}
       <div className="p-4 border-t border-gray-100">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 border border-gray-200">
@@ -69,30 +68,27 @@ const Sidebar = ({ onOpenNew }) => {
   );
 };
 
-// 👇 2. Extract the layout into an inner component so we can use `useLocation`
 const AppLayout = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0); 
   
-  // React Router hook to check the current URL path
+  
   const location = useLocation();
 
   const handleSuccess = () => {
     setRefreshKey(old => old + 1); 
   };
 
-  // 👇 3. Check if the current route is the patient chat
+ 
   const isChatRoute = location.pathname.startsWith('/chat');
 
   return (
     <div className="flex min-h-screen bg-gray-50 font-sans text-gray-900">
-      {/* 👇 4. Conditionally hide the sidebar if it is the chat route */}
+     
       {!isChatRoute && <Sidebar onOpenNew={() => setIsModalOpen(true)} />}
       
-      {/* Main Content Wrapper - Remove left margin if chat route */}
       <div className={`flex-1 flex flex-col min-w-0 ${!isChatRoute ? 'ml-64' : ''}`}>
 
-        {/* Scrollable Content Area - Remove padding if chat route for fullscreen mobile view */}
         <main className={`flex-1 overflow-y-auto ${!isChatRoute ? 'p-8' : ''}`}>
           <div className={!isChatRoute ? 'max-w-6xl mx-auto' : 'h-full'}>
             <Routes>
@@ -101,7 +97,7 @@ const AppLayout = () => {
               <Route path="/patients/:id" element={<PatientProfile />} />
               <Route path="/rx" element={<Prescriptions />} />
               
-              {/* 👇 5. Add the new AI Chat Route */}
+         
               <Route path="/chat/:id" element={<PatientChat />} />
             </Routes>
           </div>

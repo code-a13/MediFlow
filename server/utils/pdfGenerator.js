@@ -1,14 +1,14 @@
 const PDFDocument = require('pdfkit');
 const moment = require('moment');
 
-// 👇 1. Import the QRCode library
+
 const QRCode = require('qrcode');
 
 exports.generatePrescriptionPDF = (patient, prescription) => {
-  // 👇 2. Make the Promise executor async so we can await the QR generation
+  
   return new Promise(async (resolve, reject) => {
     try {
-      // 1. Setup Document
+     
       const doc = new PDFDocument({ 
         size: 'A4', 
         margin: 50, 
@@ -22,13 +22,13 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
 
       doc.addPage();
 
-      // --- THEME CONSTANTS ---
+      
       const COLORS = {
-        primary: '#0F172A',    // Dark Slate (Text)
-        accent: '#2563EB',     // Royal Blue (Headers)
-        tableHeader: '#F1F5F9',// Light Gray
-        border: '#E2E8F0',     // Border Gray
-        zebra: '#F8FAFC'       // Zebra Stripe
+        primary: '#0F172A',    
+        accent: '#2563EB',     
+        tableHeader: '#F1F5F9',
+        border: '#E2E8F0',   
+        zebra: '#F8FAFC'       
       };
 
       const FONTS = {
@@ -37,27 +37,26 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
         italic: 'Helvetica-Oblique'
       };
 
-      // --- HELPER FUNCTIONS ---
+     
       
       const drawHeader = () => {
-        // Logo Placeholder
+       
         doc.circle(70, 70, 20).fill(COLORS.accent);
         doc.fillColor('white').fontSize(16).font(FONTS.bold).text('+', 63, 64);
         
-        // Clinic Name
+        
         doc.fillColor(COLORS.primary).fontSize(20).font(FONTS.bold)
            .text('CITY HEALTH CLINIC', 100, 55);
         
         doc.fontSize(10).font(FONTS.regular).fillColor('#64748B')
            .text('Excellence in Compassionate Care', 100, 80);
 
-        // Doctor Details (Right Aligned)
         doc.fontSize(10).fillColor(COLORS.primary).font(FONTS.bold)
            .text('Dr. S. Kavin', 400, 55, { align: 'right' });
         doc.font(FONTS.regular).text('MBBS, MD (Cardiology)', 400, 70, { align: 'right' });
         doc.text('Reg: 123456 | +91 98765 43210', 400, 85, { align: 'right' });
 
-        // Divider
+        
         doc.moveTo(50, 105).lineTo(545, 105).strokeColor(COLORS.accent).lineWidth(2).stroke();
       };
 
@@ -65,38 +64,36 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
         const range = doc.bufferedPageRange();
         for (let i = range.start; i < range.start + range.count; i++) {
           doc.switchToPage(i);
-          
-          // Footer Line
+       
           doc.moveTo(50, 780).lineTo(545, 780).strokeColor(COLORS.border).lineWidth(1).stroke();
           
-          // Disclaimer
+         
           doc.fontSize(8).fillColor('#94A3B8').font(FONTS.italic)
              .text('This is a digitally generated prescription and is valid without a physical signature.', 50, 790, { align: 'center' });
           
-          // Page Number
+          
           doc.fontSize(9).fillColor(COLORS.primary).font(FONTS.regular)
              .text(`Page ${i + 1} of ${range.count}`, 500, 790, { align: 'right' });
         }
       };
 
-      // --- 2. BUILD CONTENT ---
+     
 
       drawHeader();
 
-      let y = 130; // Start Y position
+      let y = 130; 
 
-      // A. Patient Demographics (Grid Layout)
       doc.rect(50, y, 495, 75).fill('#F8FAFC').stroke(COLORS.border);
       doc.fillColor(COLORS.primary);
 
-      // Row 1
+      
       doc.font(FONTS.bold).fontSize(10).text('PATIENT NAME:', 65, y + 15);
       doc.font(FONTS.regular).text(`${patient.firstName} ${patient.lastName}`, 160, y + 15);
 
       doc.font(FONTS.bold).text('DATE:', 350, y + 15);
       doc.font(FONTS.regular).text(moment(prescription.visitDate).format('DD MMM, YYYY'), 400, y + 15);
 
-      // Row 2
+     
       doc.font(FONTS.bold).text('AGE / GENDER:', 65, y + 35);
       const age = new Date().getFullYear() - new Date(patient.dateOfBirth).getFullYear();
       doc.font(FONTS.regular).text(`${age} Years / ${patient.gender}`, 160, y + 35);
@@ -104,17 +101,17 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
       doc.font(FONTS.bold).text('PATIENT ID:', 350, y + 35);
       doc.font(FONTS.regular).text(patient._id.toString().slice(-6).toUpperCase(), 400, y + 35);
 
-      // Row 3
+      
       doc.font(FONTS.bold).text('ADDRESS:', 65, y + 55);
       doc.font(FONTS.regular).text(patient.address || 'N/A', 160, y + 55, { width: 300, lineBreak: false, ellipsis: true });
 
       y += 95;
 
-      // B. Vitals & Diagnosis Section
+     
       doc.font(FONTS.bold).fontSize(12).fillColor(COLORS.accent).text('CLINICAL FINDINGS', 50, y);
       y += 20;
 
-      // Vitals Strip
+      
       const v = prescription.vitals || {};
       const vitals = [
         `BP: ${v.bloodPressure || '--'}`,
@@ -127,23 +124,21 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
       doc.fontSize(10).font(FONTS.regular).fillColor(COLORS.primary).text(vitals, 50, y);
       y += 25;
 
-      // Diagnosis
       doc.font(FONTS.bold).text('Diagnosis:', 50, y);
       doc.font(FONTS.regular).text(prescription.diagnosis, 120, y);
       y += 20;
 
-      // Symptoms
+     
       if (prescription.chiefComplaints && prescription.chiefComplaints.length > 0) {
         doc.font(FONTS.bold).text('Symptoms:', 50, y);
         doc.font(FONTS.regular).text(prescription.chiefComplaints.join(', '), 120, y);
-        y += 30; // Extra spacing before table
+        y += 30; 
       } else {
         y += 10;
       }
 
       y += 10;
 
-      // --- C. MEDICINE TABLE ---
       const drawTableHeader = (topY) => {
         doc.rect(50, topY, 495, 25).fill(COLORS.accent);
         doc.fillColor('white').font(FONTS.bold).fontSize(9);
@@ -157,7 +152,7 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
       drawTableHeader(y);
       y += 25;
 
-      // Loop Meds
+      
       doc.fillColor(COLORS.primary).font(FONTS.regular).fontSize(10);
       
       prescription.medications.forEach((med, i) => {
@@ -192,9 +187,8 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
         y += 30; 
       });
 
-      // --- D. ADVICE ---
-      // Check space for Advice, QR Code, and Signature
-      if (y > 550) { // Changed from 650 to 550 to ensure room for the new QR box
+   
+      if (y > 550) { 
         doc.addPage();
         drawHeader();
         y = 130;
@@ -209,26 +203,24 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
       
       y += 90; 
 
-      // 👇 3. Generate QR Code
       const chatUrl = `http://localhost:5173/chat/${prescription._id}`;
       const qrImage = await QRCode.toDataURL(chatUrl, { errorCorrectionLevel: 'H' });
       
-      // Left Side: AI Support Box
-      doc.rect(50, y, 220, 70).fillAndStroke('#F0F9FF', COLORS.border); // Light blue background
+      
+      doc.rect(50, y, 220, 70).fillAndStroke('#F0F9FF', COLORS.border); 
       doc.fontSize(9).font(FONTS.bold).fillColor(COLORS.accent)
          .text('SCAN FOR 24/7 AI SUPPORT', 60, y + 10);
       doc.fontSize(8).font(FONTS.regular).fillColor('#64748B')
          .text('Scan this code with your phone camera to chat securely with your medical AI assistant.', 60, y + 25, { width: 130 });
-      // Embed the QR Code image
+     
       doc.image(qrImage, 200, y + 5, { width: 60 });
 
-      // Right Side: Signature
-      doc.fillColor(COLORS.primary); // Reset color
+      doc.fillColor(COLORS.primary); 
       doc.fontSize(10).font(FONTS.bold).text('Dr. S. Kavin', 400, y + 40, { align: 'right' });
       doc.moveTo(400, y + 35).lineTo(545, y + 35).strokeColor(COLORS.primary).lineWidth(1).stroke();
       doc.fontSize(8).font(FONTS.regular).text('(Signature)', 400, y + 50, { align: 'right' });
 
-      // Apply Footer to all pages
+      
       drawFooter();
 
       doc.end();
