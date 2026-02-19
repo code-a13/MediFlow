@@ -3,7 +3,6 @@ import axios from 'axios';
 import { X, Loader2 } from 'lucide-react';
 
 const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
-  // --- Logic State (Unchanged) ---
   const initialFormState = {
     firstName: '', lastName: '', dateOfBirth: '', gender: 'Male', bloodGroup: 'Unknown',
     contactNumber: '', email: '',
@@ -15,7 +14,6 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // --- Effect: Auto-fill Phone ---
   useEffect(() => {
     if (isOpen && initialPhone) {
       setFormData(prev => ({ ...prev, contactNumber: initialPhone }));
@@ -24,7 +22,6 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
 
   if (!isOpen) return null;
 
-  // --- Handlers ---
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -66,15 +63,13 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
     }
   };
 
-  // --- Reusable Input Style ---
   const inputClass = "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors";
   const labelClass = "block text-sm font-medium text-gray-700 mb-1";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl flex flex-col max-h-[90vh]">
-        
-        {/* Header */}
+
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-100">
           <h2 className="text-lg font-bold text-gray-800">New Patient</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
@@ -82,7 +77,6 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
           </button>
         </div>
 
-        {/* Form Body */}
         <div className="p-6 overflow-y-auto">
           {error && (
             <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-md border border-red-100">
@@ -91,8 +85,7 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
           )}
 
           <form id="create-patient-form" onSubmit={handleSubmit} className="space-y-6">
-            
-            {/* 1. Personal Info */}
+
             <div>
               <h3 className="font-bold text-gray-900 mb-3 border-b border-gray-100 pb-1">Personal Details</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -127,7 +120,6 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
               </div>
             </div>
 
-            {/* 2. Contact */}
             <div>
               <h3 className="font-bold text-gray-900 mb-3 border-b border-gray-100 pb-1">Contact Info</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -142,7 +134,6 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
               </div>
             </div>
 
-            {/* 3. Address */}
             <div>
               <h3 className="font-bold text-gray-900 mb-3 border-b border-gray-100 pb-1">Address</h3>
               <div className="space-y-4">
@@ -167,7 +158,6 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
               </div>
             </div>
 
-            {/* 4. Medical History */}
             <div>
               <h3 className="font-bold text-gray-900 mb-3 border-b border-gray-100 pb-1">Medical History</h3>
               <div className="space-y-4">
@@ -185,7 +175,6 @@ const CreatePatientModal = ({ isOpen, onClose, onSuccess, initialPhone }) => {
           </form>
         </div>
 
-        {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-lg">
           <button 
             onClick={onClose}

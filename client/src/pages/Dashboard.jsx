@@ -15,7 +15,7 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // --- Logic Remains Unchanged ---
+
   useEffect(() => {
     loadDashboardData();
   }, []);
@@ -55,14 +55,14 @@ const Dashboard = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 text-gray-800">
       
-      {/* 1. Header & Search Row */}
+    
       <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-gray-500 text-sm">Welcome back, Dr. Sarah.</p>
         </div>
 
-        {/* Simple Search Input */}
+    
         <div className="relative w-full md:w-96">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -75,7 +75,6 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Search Dropdown */}
           {query.length > 2 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-50 overflow-hidden">
               {searchResults.length > 0 ? (
@@ -99,7 +98,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* 2. Stats Grid */}
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
@@ -126,7 +124,6 @@ const Dashboard = () => {
             <p className="text-2xl font-bold">{stats.stats.total_prescriptions}</p>
           </div>
 
-          {/* Simple AI Card */}
           <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 shadow-sm flex flex-col justify-center">
              <div className="flex items-center gap-2 mb-1 text-blue-800">
                <Zap size={16} />
@@ -138,7 +135,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* 3. Recent Patients Table */}
+    
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="font-bold text-lg">Recent Patients</h2>

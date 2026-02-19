@@ -17,10 +17,10 @@ export const checkInteraction = (newDrug, currentMeds) => {
     if (!activeDrug) return;
 
     if (DANGEROUS_PAIRS[normalizedNew]?.includes(activeDrug)) {
-      conflicts.push(`⚠️ DANGER: '${newDrug}' interacts with '${activeDrugRaw}'!`);
+      conflicts.push(`DANGER: '${newDrug}' interacts with '${activeDrugRaw}'!`);
     }
     if (DANGEROUS_PAIRS[activeDrug]?.includes(normalizedNew)) {
-      conflicts.push(`⚠️ DANGER: '${activeDrugRaw}' interacts with '${newDrug}'!`);
+      conflicts.push(`DANGER: '${activeDrugRaw}' interacts with '${newDrug}'!`);
     }
   });
   return [...new Set(conflicts)];

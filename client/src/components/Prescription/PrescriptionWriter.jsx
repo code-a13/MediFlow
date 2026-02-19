@@ -4,7 +4,6 @@ import {
   Plus, Trash2, Save, Loader2, Sparkles, AlertCircle 
 } from 'lucide-react';
 
-// Debounce helper
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -15,7 +14,6 @@ const useDebounce = (value, delay) => {
 };
 
 const PrescriptionWriter = ({ onSave, isSaving }) => {
-  // --- STATE ---
   const [vitals, setVitals] = useState({ weight: '', bp: '', temp: '', spo2: '', pulse: '' });
   const [diagnosis, setDiagnosis] = useState('');
   const [symptoms, setSymptoms] = useState('');
@@ -27,7 +25,6 @@ const PrescriptionWriter = ({ onSave, isSaving }) => {
   const [isAiThinking, setIsAiThinking] = useState(false);
   const debouncedSymptoms = useDebounce(symptoms, 1500);
 
-  // --- AI TRIGGER ---
   useEffect(() => {
     if (debouncedSymptoms.length > 5) {
       fetchAiSuggestions(debouncedSymptoms);
@@ -48,7 +45,6 @@ const PrescriptionWriter = ({ onSave, isSaving }) => {
     }
   };
 
-  // --- HANDLERS ---
   const addMed = (med) => {
     if (!med.name) return;
     setMeds([...meds, { ...med, id: Date.now() }]);
@@ -65,14 +61,12 @@ const PrescriptionWriter = ({ onSave, isSaving }) => {
     onSave(payload);
   };
 
-  // --- STYLES ---
   const inputClass = "w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500";
   const labelClass = "block text-sm font-medium text-gray-700 mb-1";
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-sm rounded-lg border border-gray-200">
       
-      {/* 1. Vitals Section */}
       <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
         <h3 className="text-sm font-bold text-gray-700 uppercase mb-3">Vitals</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -84,7 +78,6 @@ const PrescriptionWriter = ({ onSave, isSaving }) => {
         </div>
       </div>
 
-      {/* 2. Clinical Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div>
           <label className={labelClass}>Diagnosis</label>
@@ -107,7 +100,6 @@ const PrescriptionWriter = ({ onSave, isSaving }) => {
             onChange={e => setSymptoms(e.target.value)} 
           />
           
-          {/* AI Suggestions List */}
           {aiSuggestions.length > 0 && (
             <div className="mt-2 space-y-1">
               <p className="text-xs font-bold text-blue-600 flex items-center gap-1"><Sparkles size={10}/> AI Suggestions:</p>
@@ -123,7 +115,6 @@ const PrescriptionWriter = ({ onSave, isSaving }) => {
         </div>
       </div>
 
-      {/* 3. Add Medication */}
       <div className="mb-6 border-t border-gray-100 pt-4">
         <h3 className={labelClass}>Add Medication</h3>
         <div className="flex flex-col md:flex-row gap-2">
@@ -139,7 +130,6 @@ const PrescriptionWriter = ({ onSave, isSaving }) => {
         </div>
       </div>
 
-      {/* 4. Medication List Table */}
       <div className="mb-6 border rounded-lg overflow-hidden">
         <table className="w-full text-left text-sm">
           <thead className="bg-gray-50 text-gray-500 border-b">
@@ -173,7 +163,6 @@ const PrescriptionWriter = ({ onSave, isSaving }) => {
         </table>
       </div>
 
-      {/* 5. Footer Actions */}
       <div className="flex justify-end gap-4 border-t border-gray-100 pt-4">
         <div className="mr-auto flex items-center gap-2 text-xs text-amber-600 bg-amber-50 px-3 py-1 rounded border border-amber-100">
            <AlertCircle size={12} /> Auto-safety check enabled

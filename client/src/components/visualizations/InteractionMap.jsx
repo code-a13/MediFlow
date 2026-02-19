@@ -3,7 +3,7 @@ import axios from 'axios';
 import { PlusCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 const PrescriptionForm = ({ patientId, onRefresh }) => {
-  // --- Logic State (Unchanged) ---
+
   const [formData, setFormData] = useState({
     drugName: '',
     dosage: '',
@@ -23,7 +23,6 @@ const PrescriptionForm = ({ patientId, onRefresh }) => {
     setError('');
 
     try {
-      // 1. Add to Medications
       await axios.post(`http://localhost:5000/api/patients/${patientId}/medications`, {
         drugName: formData.drugName,
         dosage: formData.dosage,
@@ -31,7 +30,6 @@ const PrescriptionForm = ({ patientId, onRefresh }) => {
         startDate: new Date()
       });
 
-      // 2. Add to Timeline
       await axios.post(`http://localhost:5000/api/patients/${patientId}/timeline`, {
         title: `Prescribed ${formData.drugName}`,
         date: new Date(),
@@ -39,7 +37,6 @@ const PrescriptionForm = ({ patientId, onRefresh }) => {
         category: 'Prescription'
       });
 
-      // Reset & Refresh
       setFormData({ drugName: '', dosage: '', frequency: 'Once Daily', category: 'Prescription' });
       if (onRefresh) onRefresh();
 
@@ -50,30 +47,25 @@ const PrescriptionForm = ({ patientId, onRefresh }) => {
     }
   };
 
-  // --- Styles ---
   const labelClass = "block text-sm font-medium text-gray-700 mb-1";
   const inputClass = "w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all";
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
       
-      {/* Header */}
       <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
         <PlusCircle size={20} className="text-blue-600" />
         New Prescription
       </h3>
-      
-      {/* Error Message */}
+ 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-4 text-sm flex items-center gap-2">
           <AlertCircle size={16} /> {error}
         </div>
       )}
 
-      {/* Form */}
+      
       <form onSubmit={handleSubmit} className="space-y-4">
-        
-        {/* Drug Name */}
         <div>
           <label className={labelClass}>Drug Name</label>
           <input
@@ -87,7 +79,6 @@ const PrescriptionForm = ({ patientId, onRefresh }) => {
           />
         </div>
 
-        {/* Grid for Dosage & Frequency */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={labelClass}>Dosage</label>
@@ -117,7 +108,6 @@ const PrescriptionForm = ({ patientId, onRefresh }) => {
           </div>
         </div>
 
-        {/* Action Button */}
         <button 
           type="submit" 
           disabled={loading}

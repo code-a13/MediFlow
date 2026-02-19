@@ -2,12 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
-// 👇 Import the medicine list
+
 const medicineList = require('./data/medicines');
 
 const app = express();
 
-// Middleware
+
 app.use(express.json());
 app.use(cors());
 
@@ -18,13 +18,12 @@ connectDB();
 app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 
-// --- ⚡ AUTO-COMPLETE MEDICINE ROUTE ---
 app.get('/api/drugs/search', (req, res) => {
     try {
         const { q } = req.query;
         if (!q) return res.json([]);
 
-        // Filter list (Case Insensitive)
+        
         const results = medicineList.filter(med => 
             med.toLowerCase().includes(q.toLowerCase())
         );
@@ -46,4 +45,4 @@ app.get('/api/drugs/search', (req, res) => {
     res.json(results.slice(0, 10));
 });
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Node Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Node Server running on port ${PORT}`));

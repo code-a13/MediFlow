@@ -2,36 +2,36 @@ const mongoose = require('mongoose');
 
 const PrescriptionSchema = new mongoose.Schema({
   patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient', required: true, index: true },
-  doctorId: { type: String, default: "Dr. S. Kavin" }, // Hardcoded for now
+  doctorId: { type: String, default: "Dr. S. Kavin" },
   visitDate: { type: Date, default: Date.now },
 
-  // 1. Vitals & Stats (Crucial for Pediatrics/Cardiac)
+  // 1. Vitals & Stats 
   vitals: {
-    weight: { type: String, default: "--" }, // e.g., "72 kg"
-    height: { type: String, default: "--" }, // e.g., "175 cm"
-    bloodPressure: { type: String, default: "--" }, // e.g., "120/80"
-    temperature: { type: String, default: "--" }, // e.g., "98.6 F"
-    pulse: { type: String, default: "--" }, // e.g., "72 bpm"
-    spo2: { type: String, default: "--" } // e.g., "98%"
+    weight: { type: String, default: "--" }, 
+    height: { type: String, default: "--" }, 
+    bloodPressure: { type: String, default: "--" }, 
+    temperature: { type: String, default: "--" }, 
+    pulse: { type: String, default: "--" }, 
+    spo2: { type: String, default: "--" } 
   },
 
   // 2. Clinical Findings
-  chiefComplaints: [String], // e.g., ["Fever for 3 days", "Dry Cough"]
-  diagnosis: { type: String, required: true }, // e.g., "Acute Bronchitis"
-  clinicalNotes: { type: String }, // e.g., "Chest clear, throat inflamed"
+  chiefComplaints: [String], 
+  diagnosis: { type: String, required: true }, 
+  clinicalNotes: { type: String }, 
 
   // 3. The Meds
   medications: [{
     name: { type: String, required: true },
-    dosage: { type: String, required: true }, // "500mg"
+    dosage: { type: String, required: true }, 
     frequency: { type: String, required: true }, // "1-0-1"
-    duration: { type: String, required: true }, // "5 Days"
-    instruction: { type: String } // "After Food"
+    duration: { type: String, required: true }, 
+    instruction: { type: String } 
   }],
 
   // 4. Follow Up
   nextVisit: { type: Date },
-  advice: { type: String } // "Drink warm water, rest"
+  advice: { type: String } 
 });
 
 module.exports = mongoose.model('Prescription', PrescriptionSchema);

@@ -5,7 +5,6 @@ const CustomNode = ({ data, isConnectable }) => {
   return (
     <div className="px-4 py-2 shadow-md rounded-md bg-white border-2 border-gray-200 min-w-[150px] text-center">
       
-      {/* Input Handle (Top) */}
       <Handle
         type="target"
         position={Position.Top}
@@ -27,7 +26,6 @@ const CustomNode = ({ data, isConnectable }) => {
         )}
       </div>
 
-      {/* Output Handle (Bottom) */}
       <Handle
         type="source"
         position={Position.Bottom}

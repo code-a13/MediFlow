@@ -11,16 +11,15 @@ export default {
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       colors: {
-        // "Brand" colors for primary actions (Enterprise Indigo)
         brand: {
           50: '#eef2ff',
           100: '#e0e7ff',
           500: '#6366f1',
-          600: '#4f46e5', // Primary
-          700: '#4338ca', // Hover
+          600: '#4f46e5', 
+          700: '#4338ca', 
           900: '#312e81',
         },
-        // Custom depth for sidebar
+  
         slate: {
           850: '#1e293b', 
         }

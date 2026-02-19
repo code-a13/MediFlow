@@ -5,8 +5,7 @@ import {
 } from 'lucide-react';
 
 const PatientTimeline = ({ history }) => {
-  
-  // 1. Handle Empty State
+
   if (!history || history.length === 0) {
     return (
       <div className="py-12 flex flex-col items-center justify-center text-gray-400 border border-dashed border-gray-200 rounded-lg bg-gray-50">
@@ -16,7 +15,6 @@ const PatientTimeline = ({ history }) => {
     );
   }
 
-  // 2. Helper for Icons & Colors
   const getEventStyle = (type) => {
     switch (type) {
       case 'Prescription': 
@@ -32,7 +30,6 @@ const PatientTimeline = ({ history }) => {
     }
   };
 
-  // 3. Render Simple List
   return (
     <div className="px-4">
       <div className="relative border-l-2 border-gray-200 ml-3 space-y-8">
@@ -43,12 +40,12 @@ const PatientTimeline = ({ history }) => {
           return (
             <div key={index} className="relative ml-8">
               
-              {/* Timeline Dot (Icon) */}
+           
               <div className={`absolute -left-[43px] top-0 w-8 h-8 rounded-full border-2 ${style.border} ${style.color} flex items-center justify-center bg-white z-10`}>
                 {style.icon}
               </div>
 
-              {/* Date Badge */}
+           
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-xs font-bold text-gray-400 flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
                   <Calendar size={12} />
@@ -60,7 +57,6 @@ const PatientTimeline = ({ history }) => {
                 </span>
               </div>
 
-              {/* Card Content */}
               <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-bold text-gray-800 text-base">{event.title}</h3>
@@ -73,7 +69,6 @@ const PatientTimeline = ({ history }) => {
                   {event.description}
                 </p>
 
-                {/* Optional: Diagnosis Tag if exists */}
                 {event.diagnosis && (
                   <div className="mt-3 pt-3 border-t border-gray-100">
                     <span className="text-xs font-semibold text-gray-500">Diagnosis: </span>

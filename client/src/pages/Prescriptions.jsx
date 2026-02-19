@@ -11,7 +11,6 @@ const Prescriptions = () => {
   const [search, setSearch] = useState('');
   const [downloadingId, setDownloadingId] = useState(null);
 
-  // --- 1. FETCH DATA ---
   useEffect(() => {
     fetchHistory();
   }, []);
@@ -27,7 +26,7 @@ const Prescriptions = () => {
     }
   };
 
-  // --- 2. DOWNLOAD HANDLER ---
+
   const handleDownload = async (rxId) => {
     setDownloadingId(rxId);
     try {
@@ -49,7 +48,7 @@ const Prescriptions = () => {
     }
   };
 
-  // --- 3. FILTER LOGIC ---
+
   const filtered = prescriptions.filter(rx => 
     rx.patientId?.firstName.toLowerCase().includes(search.toLowerCase()) ||
     rx.diagnosis.toLowerCase().includes(search.toLowerCase())
@@ -58,14 +57,13 @@ const Prescriptions = () => {
   return (
     <div className="p-6">
       
-      {/* Header Section */}
+
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Prescriptions</h1>
           <p className="text-gray-500 text-sm">View and download patient records.</p>
         </div>
 
-        {/* Simple Search Bar */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <input 
@@ -77,7 +75,6 @@ const Prescriptions = () => {
         </div>
       </div>
 
-      {/* Content Area */}
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
         
         {loading ? (
