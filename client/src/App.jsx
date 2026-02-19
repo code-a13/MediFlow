@@ -9,6 +9,9 @@ import PatientProfile from './pages/PatientProfile';
 import Prescriptions from './pages/Prescriptions';
 import CreatePatientModal from './components/CreatePatientModal';
 
+// 👇 1. Import the new Patient Chat page
+import PatientChat from './pages/PatientChat'; 
+
 // --- Simple Sidebar ---
 const Sidebar = ({ onOpenNew }) => {
   const location = useLocation();
@@ -66,41 +69,59 @@ const Sidebar = ({ onOpenNew }) => {
   );
 };
 
-function App() {
+// 👇 2. Extract the layout into an inner component so we can use `useLocation`
+const AppLayout = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0); 
+  
+  // React Router hook to check the current URL path
+  const location = useLocation();
 
   const handleSuccess = () => {
     setRefreshKey(old => old + 1); 
   };
 
+  // 👇 3. Check if the current route is the patient chat
+  const isChatRoute = location.pathname.startsWith('/chat');
+
+  return (
+    <div className="flex min-h-screen bg-gray-50 font-sans text-gray-900">
+      {/* 👇 4. Conditionally hide the sidebar if it is the chat route */}
+      {!isChatRoute && <Sidebar onOpenNew={() => setIsModalOpen(true)} />}
+      
+      {/* Main Content Wrapper - Remove left margin if chat route */}
+      <div className={`flex-1 flex flex-col min-w-0 ${!isChatRoute ? 'ml-64' : ''}`}>
+
+        {/* Scrollable Content Area - Remove padding if chat route for fullscreen mobile view */}
+        <main className={`flex-1 overflow-y-auto ${!isChatRoute ? 'p-8' : ''}`}>
+          <div className={!isChatRoute ? 'max-w-6xl mx-auto' : 'h-full'}>
+            <Routes>
+              <Route path="/" element={<Dashboard key={refreshKey} />} />
+              <Route path="/patients" element={<Dashboard key={refreshKey} />} />
+              <Route path="/patients/:id" element={<PatientProfile />} />
+              <Route path="/rx" element={<Prescriptions />} />
+              
+              {/* 👇 5. Add the new AI Chat Route */}
+              <Route path="/chat/:id" element={<PatientChat />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+
+      <CreatePatientModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={handleSuccess} 
+      />
+    </div>
+  );
+};
+
+
+function App() {
   return (
     <Router>
-      <div className="flex min-h-screen bg-gray-50 font-sans text-gray-900">
-        <Sidebar onOpenNew={() => setIsModalOpen(true)} />
-        
-        {/* Main Content Wrapper */}
-        <div className="flex-1 ml-64 flex flex-col min-w-0">
-
-          {/* Scrollable Content Area */}
-          <main className="flex-1 p-8 overflow-y-auto">
-            <div className="max-w-6xl mx-auto">
-              <Routes>
-                <Route path="/" element={<Dashboard key={refreshKey} />} />
-                <Route path="/patients" element={<Dashboard key={refreshKey} />} />
-                <Route path="/patients/:id" element={<PatientProfile />} />
-                <Route path="/rx" element={<Prescriptions />} />
-              </Routes>
-            </div>
-          </main>
-        </div>
-
-        <CreatePatientModal 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
-          onSuccess={handleSuccess} 
-        />
-      </div>
+      <AppLayout />
     </Router>
   );
 }

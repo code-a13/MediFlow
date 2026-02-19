@@ -1,8 +1,12 @@
 const PDFDocument = require('pdfkit');
 const moment = require('moment');
 
+// 👇 1. Import the QRCode library
+const QRCode = require('qrcode');
+
 exports.generatePrescriptionPDF = (patient, prescription) => {
-  return new Promise((resolve, reject) => {
+  // 👇 2. Make the Promise executor async so we can await the QR generation
+  return new Promise(async (resolve, reject) => {
     try {
       // 1. Setup Document
       const doc = new PDFDocument({ 
@@ -139,8 +143,7 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
 
       y += 10;
 
-      // --- C. MEDICINE TABLE (The Complex Part) ---
-      
+      // --- C. MEDICINE TABLE ---
       const drawTableHeader = (topY) => {
         doc.rect(50, topY, 495, 25).fill(COLORS.accent);
         doc.fillColor('white').font(FONTS.bold).fontSize(9);
@@ -158,70 +161,72 @@ exports.generatePrescriptionPDF = (patient, prescription) => {
       doc.fillColor(COLORS.primary).font(FONTS.regular).fontSize(10);
       
       prescription.medications.forEach((med, i) => {
-        // 1. Check if page is full (leaving space for footer)
         if (y > 700) {
           doc.addPage();
-          drawHeader(); // Redraw header on new page
-          y = 130;      // Reset Y
-          drawTableHeader(y); // Redraw table header
+          drawHeader(); 
+          y = 130;      
+          drawTableHeader(y); 
           y += 25;
         }
 
-        // 2. Draw Row Background (Zebra)
         if (i % 2 === 0) {
           doc.rect(50, y, 495, 25).fill(COLORS.zebra);
         }
 
-        // 3. Draw Text
         doc.fillColor(COLORS.primary);
-        
-        // Index
         doc.text(i + 1, 60, y + 8);
-        
-        // Name (Handle long names)
         doc.text(med.name, 90, y + 8, { width: 180, lineBreak: false, ellipsis: true });
-        
-        // Dosage
         doc.text(med.dosage, 280, y + 8);
         
-        // Frequency (Boxed Style)
         doc.save();
         doc.roundedRect(368, y + 6, 60, 14, 2).stroke(COLORS.border);
         doc.text(med.frequency || med.freq, 370, y + 9, { width: 56, align: 'center' });
         doc.restore();
 
-        // Duration
         doc.text(med.duration || med.dur, 460, y + 8);
 
-        // Optional: Instruction text below name if exists
         if (med.instruction) {
              doc.fontSize(8).fillColor('#64748B')
                 .text(`Note: ${med.instruction}`, 90, y + 20);
         }
-
-        y += 30; // Row Height
+        y += 30; 
       });
 
-      // --- D. ADVICE & SIGNATURE ---
-      
-      // Check space again
-      if (y > 650) {
+      // --- D. ADVICE ---
+      // Check space for Advice, QR Code, and Signature
+      if (y > 550) { // Changed from 650 to 550 to ensure room for the new QR box
         doc.addPage();
         drawHeader();
         y = 130;
       }
 
       y += 30;
-      doc.rect(50, y, 495, 80).stroke(COLORS.border);
+      doc.rect(50, y, 495, 70).stroke(COLORS.border);
       doc.fontSize(10).font(FONTS.bold).fillColor(COLORS.primary)
          .text('ADVICE / INSTRUCTIONS:', 60, y + 10);
       doc.font(FONTS.regular).text(prescription.advice || 'Drink plenty of water. Take rest.', 60, y + 30);
 
-      // Signature Area
-      y += 100;
-      doc.text('Dr. S. Kavin', 400, y, { align: 'right' });
-      doc.moveTo(400, y - 5).lineTo(545, y - 5).strokeColor(COLORS.primary).lineWidth(1).stroke();
-      doc.fontSize(8).text('(Signature)', 400, y + 5, { align: 'right' });
+      
+      y += 90; 
+
+      // 👇 3. Generate QR Code
+      const chatUrl = `http://localhost:5173/chat/${prescription._id}`;
+      const qrImage = await QRCode.toDataURL(chatUrl, { errorCorrectionLevel: 'H' });
+      
+      // Left Side: AI Support Box
+      doc.rect(50, y, 220, 70).fillAndStroke('#F0F9FF', COLORS.border); // Light blue background
+      doc.fontSize(9).font(FONTS.bold).fillColor(COLORS.accent)
+         .text('SCAN FOR 24/7 AI SUPPORT', 60, y + 10);
+      doc.fontSize(8).font(FONTS.regular).fillColor('#64748B')
+         .text('Scan this code with your phone camera to chat securely with your medical AI assistant.', 60, y + 25, { width: 130 });
+      // Embed the QR Code image
+      doc.image(qrImage, 200, y + 5, { width: 60 });
+
+      // Right Side: Signature
+      doc.fillColor(COLORS.primary); // Reset color
+      doc.fontSize(10).font(FONTS.bold).text('Dr. S. Kavin', 400, y + 40, { align: 'right' });
+      doc.moveTo(400, y + 35).lineTo(545, y + 35).strokeColor(COLORS.primary).lineWidth(1).stroke();
+      doc.fontSize(8).font(FONTS.regular).text('(Signature)', 400, y + 50, { align: 'right' });
 
       // Apply Footer to all pages
       drawFooter();

@@ -40,14 +40,14 @@ async def lifespan(app: FastAPI):
                     # Normalize for faster Cosine Similarity later
                     norm = np.linalg.norm(matrix, axis=1, keepdims=True)
                     vector_store["embeddings"] = matrix / (norm + 1e-10)
-                    logger.info(f"✅ Loaded {len(data)} records into RAM.")
+                    logger.info(f" Loaded {len(data)} records into RAM.")
         except Exception as e:
-            logger.error(f"❌ DB Load Error: {e}")
+            logger.error(f" DB Load Error: {e}")
     
     yield
     
     # (Optional) Cleanup logic here
-    logger.info("🛑 Shutting down AI Service.")
+    logger.info(" Shutting down AI Service.")
 
 app = FastAPI(lifespan=lifespan)
 
@@ -66,7 +66,7 @@ async def get_embedding(text: str) -> np.ndarray:
             vec = np.array(vector, dtype='float32')
             return vec / (np.linalg.norm(vec) + 1e-10)
         except Exception as e:
-            logger.error(f"⚠️ Embedding Failed: {e}")
+            logger.error(f" Embedding Failed: {e}")
             return np.array([])
 
 async def chat_with_ollama(prompt: str) -> str:
@@ -87,7 +87,7 @@ async def chat_with_ollama(prompt: str) -> str:
             res.raise_for_status()
             return res.json()["response"]
         except Exception as e:
-            logger.error(f"⚠️ Chat Generation Failed: {e}")
+            logger.error(f" Chat Generation Failed: {e}")
             return "{}"
 
 # --- HIGH-SPEED VECTOR SEARCH (NumPy) ---
@@ -140,17 +140,22 @@ class TrendRequest(BaseModel):
 # --- NEW DATA MODEL FOR CHAT ---
 class QueryRequest(BaseModel):
     query: str
+class ChatContext(BaseModel):
+    diagnosis: str
+    medications: List[dict]
+    patientAge: int
 
-# ==========================================
-# ENDPOINTS
-# ==========================================
+class ContextualChatRequest(BaseModel):
+    query: str
+    context: ChatContext
+
 
 @app.post("/api/rag/ingest")
 async def ingest_knowledge(req: KnowledgeRequest):
     """
     Ingests data, saves to disk, AND updates RAM instantly.
     """
-    logger.info(f"📥 Ingesting: {req.text[:30]}...")
+    logger.info(f" Ingesting: {req.text[:30]}...")
     
     # 1. Get raw vector
     async with httpx.AsyncClient() as client:
@@ -284,7 +289,7 @@ async def analyze_trends(req: TrendRequest):
 # --- NEW ENDPOINT: RAG CHAT (The Brain) ---
 @app.post("/api/rag/query")
 async def rag_query(req: QueryRequest):
-    logger.info(f"🧠 Thinking: {req.query}")
+    logger.info(f" Thinking: {req.query}")
     
     # 1. Search Vector DB for context
     query_vec = await get_embedding(req.query)
@@ -313,6 +318,43 @@ async def rag_query(req: QueryRequest):
     
     # Clean up response (sometimes models add quotes)
     clean_response = response.strip().strip('"')
+    return {"answer": clean_response}
+
+@app.post("/api/rag/chat")
+async def rag_prescription_chat(req: ContextualChatRequest):
+    logger.info(f"💬 Medical Chat Query: {req.query}")
+    
+    # Optional: Retrieve global medical facts based on the query
+    query_vec = await get_embedding(req.query)
+    global_medical_context = search_db(query_vec, top_k=2) if query_vec.size > 0 else ""
+
+    # Construct the highly constrained prompt
+    prompt = f"""
+    SYSTEM: You are an empathetic, professional medical AI assistant for MediFlow clinic.
+    You are chatting directly with a patient.
+    
+    RULES:
+    1. Base your answer ONLY on the patient's prescription data provided below.
+    2. If the patient asks something unrelated to their prescription, politely decline to answer.
+    3. NEVER prescribe new medications.
+    4. Keep answers brief, reassuring, and easy to understand for a {req.context.patientAge}-year-old.
+    
+    PATIENT'S PRESCRIPTION CONTEXT:
+    Diagnosis: {req.context.diagnosis}
+    Medications: {req.context.medications}
+    
+    CLINICAL KNOWLEDGE BASE:
+    {global_medical_context}
+    
+    PATIENT'S MESSAGE: 
+    "{req.query}"
+    
+    YOUR RESPONSE:
+    """
+    
+    response = await chat_with_ollama(prompt)
+    clean_response = response.strip().strip('"')
+    
     return {"answer": clean_response}
 
 if __name__ == "__main__":

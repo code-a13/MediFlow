@@ -55,14 +55,13 @@ const Dashboard = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 text-gray-800">
       
-      {/* 1. Header & Search Row */}
+
       <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-gray-500 text-sm">Welcome back, Dr. Sarah.</p>
         </div>
 
-        {/* Simple Search Input */}
         <div className="relative w-full md:w-96">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -138,7 +137,7 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* 3. Recent Patients Table */}
+    
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
           <h2 className="font-bold text-lg">Recent Patients</h2>

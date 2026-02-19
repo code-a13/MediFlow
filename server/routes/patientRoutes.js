@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { checkSafety } = require('../controllers/aiController');
-// 👇 Import ONLY what exists in the new Controller
+
 const { 
   createPatient, 
   getPatient, 
