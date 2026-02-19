@@ -10,6 +10,9 @@ import Prescriptions from './pages/Prescriptions';
 import CreatePatientModal from './components/CreatePatientModal';
 
 
+import PatientChat from './pages/PatientChat'; 
+
+ f3a08f740a835775a6b402bfd08be84eed53458e
 const Sidebar = ({ onOpenNew }) => {
   const location = useLocation();
 
@@ -21,7 +24,6 @@ const Sidebar = ({ onOpenNew }) => {
 
   return (
     <aside className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col fixed left-0 top-0 z-20">
-   
       <div className="h-16 flex items-center px-6 border-b border-gray-100">
         <h1 className="text-lg font-bold text-gray-800">MediFlow</h1>
       </div>
@@ -64,16 +66,56 @@ const Sidebar = ({ onOpenNew }) => {
   );
 };
 
-function App() {
+const AppLayout = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0); 
+  
+  
+  const location = useLocation();
 
   const handleSuccess = () => {
     setRefreshKey(old => old + 1); 
   };
 
+ 
+  const isChatRoute = location.pathname.startsWith('/chat');
+
+  return (
+    <div className="flex min-h-screen bg-gray-50 font-sans text-gray-900">
+     
+      {!isChatRoute && <Sidebar onOpenNew={() => setIsModalOpen(true)} />}
+      
+      <div className={`flex-1 flex flex-col min-w-0 ${!isChatRoute ? 'ml-64' : ''}`}>
+
+        <main className={`flex-1 overflow-y-auto ${!isChatRoute ? 'p-8' : ''}`}>
+          <div className={!isChatRoute ? 'max-w-6xl mx-auto' : 'h-full'}>
+            <Routes>
+              <Route path="/" element={<Dashboard key={refreshKey} />} />
+              <Route path="/patients" element={<Dashboard key={refreshKey} />} />
+              <Route path="/patients/:id" element={<PatientProfile />} />
+              <Route path="/rx" element={<Prescriptions />} />
+              
+         
+              <Route path="/chat/:id" element={<PatientChat />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+
+      <CreatePatientModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSuccess={handleSuccess} 
+      />
+    </div>
+  );
+};
+
+
+function App() {
   return (
     <Router>
+
       <div className="flex min-h-screen bg-gray-50 font-sans text-gray-900">
         <Sidebar onOpenNew={() => setIsModalOpen(true)} />
         
@@ -97,6 +139,8 @@ function App() {
           onSuccess={handleSuccess} 
         />
       </div>
+      <AppLayout />
+
     </Router>
   );
 }

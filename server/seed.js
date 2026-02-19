@@ -101,7 +101,6 @@ const seedData = async () => {
       }
     ]);
 
-    // --- B. Allergies (Crucial for AI Safety Checks) ---
     await Allergy.create([
       {
         patientId: vikram._id,
@@ -119,8 +118,7 @@ const seedData = async () => {
       }
     ]);
 
-    // --- C. Prescriptions (5 Visits linked to History) ---
-    // 1. 2021 - Diabetes Diagnosis
+   
     await Prescription.create({
       patientId: vikram._id,
       doctorId: "Dr. A. Verma",
@@ -135,7 +133,7 @@ const seedData = async () => {
       advice: "Strict diabetic diet. Avoid sugar and processed carbs. Walk 30 mins daily."
     });
 
-    // 2. 2022 - Gastritis Episode
+   
     await Prescription.create({
       patientId: vikram._id,
       doctorId: "Dr. S. Kavin",
@@ -151,7 +149,7 @@ const seedData = async () => {
       advice: "Avoid spicy and oily foods. Eat small, frequent meals."
     });
 
-    // 3. 2023 - Fracture Visit
+  
     await Prescription.create({
       patientId: vikram._id,
       doctorId: "Dr. R. Bones",
@@ -167,7 +165,7 @@ const seedData = async () => {
       advice: "Complete bed rest for 1 week. Keep leg elevated."
     });
 
-    // 4. 2023 - Follow up (BP Check)
+   
     await Prescription.create({
       patientId: vikram._id,
       doctorId: "Dr. A. Verma",
@@ -182,7 +180,7 @@ const seedData = async () => {
       advice: "Continue current medication. Yearly lipid profile recommended."
     });
 
-    // 5. 2024 - Latest Visit (Viral Fever)
+    
     await Prescription.create({
       patientId: vikram._id,
       doctorId: "Dr. S. Kavin",
@@ -198,8 +196,7 @@ const seedData = async () => {
       advice: "Hydration is key. Drink 3L water. Isolate if symptoms persist."
     });
 
-    // --- D. Vitals (To show trends in Graphs) ---
-    // Note: Older dates first
+    
     await Vital.create([
       { patientId: vikram._id, recordedDate: new Date("2023-01-15"), bpSystolic: 150, bpDiastolic: 95, heartRate: 80, weight: 83, spO2: 98, notes: "BP High" },
       { patientId: vikram._id, recordedDate: new Date("2023-04-20"), bpSystolic: 140, bpDiastolic: 90, heartRate: 78, weight: 82, spO2: 98, notes: "BP improving" },
@@ -208,9 +205,7 @@ const seedData = async () => {
       { patientId: vikram._id, recordedDate: new Date("2024-01-10"), bpSystolic: 128, bpDiastolic: 80, heartRate: 90, weight: 80, spO2: 97, notes: "Fever detected" }
     ]);
 
-    // ==============================================================================
-    // PATIENT 2: ANJALI (Simple Control Case)
-    // ==============================================================================
+    
     await Prescription.create({
       patientId: anjali._id,
       doctorId: "Dr. S. Kavin",
@@ -221,12 +216,12 @@ const seedData = async () => {
       medications: [{ name: "Naproxen", dosage: "500mg", frequency: "SOS", duration: "5 Days", instruction: "After Food" }]
     });
 
-    console.log("✅ Database Seeded with 'Best Input' Data!");
-    console.log("👉 Check Patient: Vikram Das for full history.");
+    console.log(" Database Seeded with 'Best Input' Data!");
+    console.log(" Check Patient: Vikram Das for full history.");
     process.exit();
     
   } catch (err) {
-    console.error("❌ Seeding Error:", err);
+    console.error(" Seeding Error:", err);
     process.exit(1);
   }
 };
