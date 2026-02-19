@@ -8,10 +8,6 @@ const connectDB = require('./config/db');
 const Prescription = require('./models/Prescription'); // Import your model
 const Patient = require('./models/Patient'); // Import your model
 
-<<<<<<< HEAD
-
-=======
->>>>>>> f3a08f740a835775a6b402bfd08be84eed53458e
 const medicineList = require('./data/medicines');
 
 const app = express();
@@ -35,7 +31,6 @@ connectDB();
 // Routes
 app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
-<<<<<<< HEAD
 
 app.get('/api/drugs/search', (req, res) => {
     try {
@@ -55,10 +50,6 @@ app.get('/api/drugs/search', (req, res) => {
     }
 });
 
-
-// Add this route
-=======
->>>>>>> f3a08f740a835775a6b402bfd08be84eed53458e
 app.get('/api/drugs/search', (req, res) => {
     const { q } = req.query;
     if (!q) return res.json([]);
@@ -66,12 +57,10 @@ app.get('/api/drugs/search', (req, res) => {
     res.json(results.slice(0, 10));
 });
 
-// --- ⚡ WEBSOCKET RAG CHAT IMPLEMENTATION ---
 io.on('connection', (socket) => {
     console.log(`User connected to chat: ${socket.id}`);
 
-    // 1. Patient joins their specific prescription room
-    socket.on('join_chat', (prescriptionId) => {
+    
         socket.join(prescriptionId);
         console.log(`Socket ${socket.id} joined room ${prescriptionId}`);
     });
@@ -90,7 +79,7 @@ io.on('connection', (socket) => {
         if (isEmergency) {
              io.to(prescriptionId).emit('receive_message', { 
                  sender: 'system', 
-                 text: "🚨 EMERGENCY DETECTED: Please stop chatting and contact emergency services or visit the nearest hospital immediately. Your doctor has been notified." 
+                 text: " EMERGENCY DETECTED: Please stop chatting and contact emergency services or visit the nearest hospital immediately. Your doctor has been notified." 
              });
              // Here you would add logic to trigger an alert on the Doctor's Dashboard
              return; 
@@ -131,12 +120,9 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log(`User disconnected: ${socket.id}`);
     });
-});
+
 
 const PORT = process.env.PORT || 5000;
-<<<<<<< HEAD
 app.listen(PORT, () => console.log(`Node Server running on port ${PORT}`));
-=======
 // Make sure to listen on the 'server', not 'app'
 server.listen(PORT, () => console.log(`🚀 Node & Socket Server running on port ${PORT}`));
->>>>>>> f3a08f740a835775a6b402bfd08be84eed53458e
